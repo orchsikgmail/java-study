@@ -1,0 +1,31 @@
+-- 테이블 생성
+drop table population;
+
+create table population(
+    prefecture varchar2(20),
+    sex number(1),
+    pop number(10),
+    constraint population_PK primary key (prefecture, sex)
+);
+
+insert into population values ('성남', 1, 60);
+insert into population values ('성남', 2, 40);
+insert into population values ('수원', 1, 90);
+insert into population values ('수원', 2, 100);
+insert into population values ('광명', 1, 100);
+insert into population values ('광명', 2, 50);
+insert into population values ('일산', 1, 100);
+insert into population values ('일산', 2, 100);
+insert into population values ('용인', 1, 20);
+insert into population values ('용인', 2, 200);
+
+
+-- 문제2
+-- 지역별로 남녀 인구를 표시 (지역, 남자인구, 여자인구)
+select * from population;
+
+
+-- 답] UNION을 사용한 방법
+
+
+-- 답] CASE를 사용한 방법

@@ -1,0 +1,15 @@
+public String[] solution2 (String[] teamIDs, String[] additional) {
+		// 결과값을 저장할 리스트
+		ArrayList<String> answerList = new ArrayList<>();
+		
+		// 등록된 아이디(teamIDs)를 리스트로 저장
+		ArrayList<String> beforeList = (ArrayList<String>) Arrays.stream(teamIDs).collect(Collectors.toList());
+		
+		// additional팀 이름을 비교해서 새로운 이름을 저장
+		Arrays.stream(additional).filter(
+				s -> !beforeList.contains(s) && !answerList.contains(s)
+				).forEach(x-> answerList.add(x));
+		
+		String[] answer = (String[]) answerList.toArray(new String[answerList.size()]);
+		return answer;
+	}

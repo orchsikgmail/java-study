@@ -1,0 +1,35 @@
+-- 테이블 생성
+drop table Employees;
+
+create table Employees(
+    emp_id varchar2(10),
+    team_id varchar2(10),
+    emp_name varchar2(20),
+    team varchar2(20),
+    constraint Employees_PK primary key (emp_id, team_id)
+);
+
+insert into Employees values ('201', '1', '지용운', '상품기획');
+insert into Employees values ('201', '2', '지용운', '개발');
+insert into Employees values ('201', '3', '지용운', '영업');
+insert into Employees values ('202', '2', '김수정', '개발');
+insert into Employees values ('203', '3', '이경호', '영업');
+insert into Employees values ('204', '1', '송미정', '상품기획');
+insert into Employees values ('204', '2', '송미정', '개발');
+insert into Employees values ('204', '3', '송미정', '영업');
+insert into Employees values ('204', '4', '송미정', '관리');
+insert into Employees values ('205', '1', '한장희', '상품기획');
+insert into Employees values ('205', '2', '한장희', '개발');
+
+
+-- 문제3
+-- 소속팀이 1개라면 해당 직원은 팀의 이름을 그대로 출력,
+-- 2개라면 '2개를 겸무', 3개 이상이라면 '3개 이상을 겸무'라는 문자열을 'team'필드로 표시.
+-- 출력대상: emp_name, team
+select * from employees;
+
+
+-- 답] union을 사용한 조건분기
+
+
+-- 답] case를 사용한 조건분기

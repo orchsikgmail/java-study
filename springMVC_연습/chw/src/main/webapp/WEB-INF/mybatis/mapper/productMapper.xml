@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="product">
+
+	<select id="productList" resultType="map">
+		select id, item_name, item_price, item_image_url from product1
+	</select>
+
+	<select id="orderList" parameterType="list" resultType="map">
+		select id, item_name, item_price, item_image_url 
+		from product1
+		WHERE id in
+			<foreach item="id" index="index" collection="list" separator="," open="(" close=")">
+				#{id}
+			</foreach>
+	</select>
+	
+	
+</mapper>

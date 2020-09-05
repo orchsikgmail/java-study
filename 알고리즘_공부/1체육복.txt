@@ -1,0 +1,35 @@
+import java.util.ArrayList;
+import java.util.List;
+
+class Solution {
+    public int solution(int n, int[] lost, int[] reserve) {
+       List<Integer> reserveList = new ArrayList<>();
+        for(int e : reserve) {
+            reserveList.add(e);
+        }
+
+        List<Integer> lostList = new ArrayList<>();
+        checkOverlap: for(int e : lost) {
+            for(int r : reserveList) {
+                if(e==r) {
+                    reserveList.remove(reserveList.indexOf(r));
+                    continue checkOverlap;
+                }
+            }
+            lostList.add(e);
+        }
+
+        List<Integer> lostList2 = new ArrayList<>();
+        checklost: for(int e : lostList) {
+            for(int r : reserveList) {
+                if(r-e==-1 || r-e==1) {
+                    reserveList.remove(reserveList.indexOf(r));
+                    continue checklost;
+                } 
+            }
+            lostList2.add(e);
+        }
+        n = n - lostList2.size();
+        return n;
+    }
+}

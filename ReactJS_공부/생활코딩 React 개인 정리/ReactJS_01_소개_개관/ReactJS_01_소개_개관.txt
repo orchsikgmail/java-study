@@ -1,0 +1,57 @@
+﻿1. ReactJS 왜 쓰나?
+# 사용자정의 태그 - Component
+	1. 가독성
+	2. 재사용성
+	3. 유지보수
+
+
+2. 개관
+-- react설치를 위하 npm필요
+>> nodeJS.org 사이트에서 nodejs설치
+>> npm은 nodejs 설치시 설치 됨.(nodejs의 구글스토어 같은 역할)
+
+-- react설치
+$ npm install -g create-react-app@2.1.8
+
+-- react 설치 확인
+$ create-react-app
+
+
+
+
+
+-- react 프로젝트 생성
+-- 바탕화면에 'react-app' 폴더생성
+-- 생성 폴더로 이동
+$ cd 해당폴더의경로(폴더드래그&드랍)
+
+-- 해당경로에 react개발환경 설치
+$ create-react-app .  // . : 해당경로를 의미
+
+-- react 샘플 웹앱 구동
+$ npm run start
+-- 서버 종료 
+$ ctrl+c
+
+
+-- App.js파일의 내용이 Function이라면 Class형식으로 변경
+<code>
+import React, { Component} from 'react';
+import logo from './logo.svg';
+import './App.css';
+
+class App extends Component {
+  render(){
+    return (
+      <div className="App">
+      ...
+		</div>
+    );
+  }
+}
+export default App;
+</code>
+
+
+-- 배포하는 법
+npx serve -s build

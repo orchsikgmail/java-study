@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aboard">
+
+	<sql id="whereSql">
+		<if test="condition == 'name'">
+			 instr(name, #{value})>0
+		</if>
+		<if test="condition == 'subject'">
+			instr(name, #{value})>0
+		</if>
+		<if test="condition == 'created'">
+		 	instr(to_char(created,'yymmdd'), #{value}) > 0 or
+		 	instr(to_char(created,'yy-mm-dd'), #{value}) > 0 or
+		 	instr(to_char(created,'yy/mm/dd'), #{value}) > 0 
+		</if>
+		<if test="condition == 'all'">
+			instr(subject, #{value})>0 or instr(contents, #{value})>0
+		</if>
+	</sql>
+
+
+	<select id="list" parameterType="map" resultType="com.sp.aboard.Aboard">
+		select * from (
+		    select rownum rnum, tb.* from (
+		        select num, name, subject, contents, to_char(created, 'yy-mm-dd') created, hitCount, depth
+		        from aboard
+		        <where>
+		        	<if test="value!=null and value!=''">
+						<include refid="whereSql" />
+					</if>
+		        </where>
+		        order by groupNum desc, orderNum desc
+<![CDATA[     
+		    ) tb where rownum <= #{end}
+		) where rnum >= #{start}
+]]>	
+	</select>
+	
+	
+	<select id="dataCount" parameterType="map" resultType="Integer">
+		select count(*) from aboard
+		<where>
+			<if test="value!=null and value!=''">
+				<include refid="whereSql" />
+			</if>
+		</where>
+	</select>
+	
+	<select id="seq_nextval" resultType="Long">
+		select aboard_seq.nextval num from dual
+	</select>
+	
+	<insert id="insert" parameterType="com.sp.aboard.Aboard">
+		insert into aboard (num, name, subject, contents, ipAddr, pwd, parent, groupNum, orderNum, depth)
+		values (#{num}, #{name}, #{subject}, #{contents}, #{ipAddr}, #{pwd}, 
+			#{parent}, #{groupNum}, #{orderNum}, #{depth} )
+	</insert>
+
+
+	<select id="readArticle" parameterType="Long" resultType="com.sp.aboard.Aboard">
+		select num, name, subject, contents, created, ipAddr, hitCount
+		from aboard
+		where num = #{num}
+	</select>
+
+	<update id="update" parameterType="com.sp.aboard.Aboard">
+		update aboard 
+		set name=#{name}, subject=#{subject}, contents=#{contents}, pwd=#{pwd}
+		where num = #{num}
+	</update>
+	
+	<update id="updateHitCount" parameterType="Long">
+		update aboard
+		set hitCount = hitCount+1
+		where num = #{num}
+	</update>
+
+	<select id="readParent" parameterType="Long" resultType="com.sp.aboard.Aboard">
+		select parent, groupNum, orderNum, depth from aboard where num = #{num}
+	</select>
+
+	<select id="readMinOrderNum" parameterType="map" resultType="Integer">
+		select nvl(min(orderNum),2) minOrderNum from aboard where num in (
+		    select num from aboard
+		    where parent=#{parentParent} and depth=#{parentDepth} and num!={parentNum}
+		)
+	</select>
+
+	<update id="updateOrderNum" parameterType="map">
+		update aboard set orderNum = orderNum+1
+		where orderNum &gt;= #{orderNum} and groupNum= #{groupNum}
+	</update>
+
+	
+
+
+</mapper>

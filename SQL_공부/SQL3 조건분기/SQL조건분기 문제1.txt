@@ -1,0 +1,36 @@
+-- 테이블 생성
+drop table items;
+
+create table items(
+    item_id varchar2(10),
+    year number(4),
+    item_name varchar2(50),
+    price_tax_ex number(10),
+    price_tax_in number(10),
+    constraint items_PK primary key(item_id, yearT
+);
+
+insert into items values ('100', 2000, '머그컵', 500, 525);
+insert into items values ('100', 2001, '머그컵', 520, 546);
+insert into items values ('100', 2002, '머그컵', 600, 630);
+insert into items values ('100', 2003, '머그컵', 600, 630);
+insert into items values ('101', 2000, '티스푼', 500, 525);
+insert into items values ('101', 2001, '티스푼', 500, 525);
+insert into items values ('101', 2002, '티스푼', 500, 525);
+insert into items values ('101', 2003, '티스푼', 500, 525);
+insert into items values ('102', 2000, '나이프', 600, 630);
+insert into items values ('102', 2001, '나이프', 550, 577);
+insert into items values ('102', 2002, '나이프', 550, 577);
+insert into items values ('102', 2003, '나이프', 400, 420);
+
+
+-- 문제1
+-- 2001년 까지는 세금이 포함되지 않은 가격을, 2002년 부터는 세금이 포함된 가격을 'price'필드로 표시해라.
+-- 표시할 데이터:  item_name, year, price
+select * from items;
+
+
+-- 답] union을 사용한 조건분기
+
+
+-- 답] case를 사용한 조건분기

@@ -1,0 +1,50 @@
+package codingtest.jinhak;
+import java.util.Stack;
+
+// 중간 삽입 삭제가 존재
+// 데이터 접근 - 후입된 가격(스택요소 중 최소값) < 비교가격 의 경우만 추가 처리 필요 ... 깊이우선탐색(모든노드방문)
+// 따라서 배열이 아닌 스택 사용을 선택
+class ProfitMargin {
+
+	public static void main(String[] args) {
+		ProfitMargin profitMargin = new ProfitMargin();
+
+		int[] price = {4,1,4,7,6};
+		int[] result = profitMargin.solution(price);
+		for(int i : result) {
+			System.out.print(i+" ");
+		}
+	}
+
+
+	public int[] solution(int[] price) {
+		// 당일 날짜 or 차익 대기 날짜를 담을 스택 - 스택을 사용한 이유는? 
+		// 차익 대기 날짜를 스택으로 관리함으로써 더 적은 경우의 수를 처리한다. <= 선출되는 요소가 제일 작은 요소이기때문
+		Stack<Integer> beginIdxs= new Stack<>();
+
+		// 결과배열(차익을 위해 필요한 기간의 배열)
+		int[] terms = new int[price.length];
+
+		// 날짜별 가격을 가져와 차익 날짜 처리 + 차익대기 스택 push()
+		for(int i=0; i<price.length; i++) {
+			// 차익 대기 날짜가 있고 && 해당 날짜에서 차익이 발생하는 경우.
+			while(!beginIdxs.empty() && price[i]>price[beginIdxs.peek()]) { 
+				int beginIdx = beginIdxs.pop();  // 차익 대기 날짜에서 제거 -> pop()
+					// 위의 과정에 의해 상위 while문이 다른 경우의 수로 작동
+				terms[beginIdx] = i - beginIdx;  // 차익을 위한 기간: i-bdginIdx
+			}
+
+			beginIdxs.push(i); // 차익 대기 날짜 스택에 해당 날짜를 담아준다.
+		}
+
+
+		// 가격 리스트의 모든 요소와 비교 후, 남아 있는 차익 대기 날짜에는 -1 입력.
+		while(!beginIdxs.empty()) {
+			int beginIdx = beginIdxs.pop();
+			terms[beginIdx] = -1;
+		}
+
+		
+		return terms;
+	}
+}

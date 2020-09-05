@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="nBoard">
+	
+	<insert id="insertNboard" parameterType="com.sp.nboard.Nboard">
+		INSERT INTO nBoard (num, name, pwd, subject, content, ipAddr)
+		VALUES (nBoard_seq.nextval, #{name}, #{pwd}, #{subject}, #{content}, #{ipAddr})
+	</insert>
+	
+	<select id="listNboard" parameterType="map" resultType="com.sp.nboard.Nboard">
+		SELECT * FROM (
+		    SELECT ROWNUM rnum, tb.* from (
+		        SELECT num, name, subject, to_char(created,'yy-mm-dd') created, hitCount
+		        FROM nBoard
+		        <where>
+		        	<if test="value != null and value != ''">
+		        		<include refid="whereSql" />
+		        	</if>
+		        </where>
+		        ORDER BY num DESC
+<![CDATA[
+		    ) tb where ROWNUM <= #{end}
+		) where rnum >= #{start}
+]]>
+	</select>
+	
+	<sql id="whereSql">
+		<if test="condition == 'all'">
+			INSTR(name, #{value})&gt;0 OR INSTR(content, #{value})&gt;0 
+				OR INSTR(subject, #{value})&gt;0
+		</if>
+		<if test="condition == 'name'">
+		 INSTR(name, #{value})&gt;0
+		</if>
+		<if test="condition == 'subject'">
+			INSTR(subject, #{value})&gt;0
+		</if>
+		<if test="condition == 'created'">
+			INSTR(to_char(created,'yymmdd'), #{value})>0 or  
+			INSTR(to_char(created,'yy/mm/dd'), #{value})>0 or  
+			INSTR(to_char(created,'yy-mm-dd'), #{value})>0
+		</if>
+	</sql>
+	
+	<select id="readArticle" parameterType="Integer" resultType="com.sp.nboard.Nboard">
+		SELECT num, name, subject, content, created, ipAddr, hitCount
+		FROM nBoard
+		WHERE num=#{num}
+	</select>
+	
+	<update id="plusHitCount" parameterType="Integer">
+		UPDATE nBoard SET hitCount = hitCount+1 WHERE num=#{num}
+	</update>
+	
+	<select id="dataCount" parameterType="map" resultType="Integer">
+		SELECT count(num) 
+		FROM nBoard
+		<where>
+			<if test="value != null and value != ''">
+				<include refid="whereSql" />
+			</if>
+		</where>
+	</select>
+	
+	<update id="updateBoard" parameterType="com.sp.nboard.Nboard">
+		UPDATE nBoard 
+		SET name=#{name}, pwd=#{pwd}, subject=#{subject}, content=#{content}, ipAddr=#{ipAddr}
+		WHERE num = #{num}
+	</update>
+	
+	<delete id="deleteBoard" parameterType="Integer">
+		DELETE FROM nBoard WHERE num = #{num}
+	</delete>
+	
+
+</mapper>

@@ -1,0 +1,30 @@
+## 사원아아디, 사원명, 사원의근무부서동료수
+## 1. self join
+## 2. gruop by
+## 3. sub query
+## 4. 집계함수
+	select e.id, e.name, ee.numCoworker
+	from employees e
+	join (select branch_id, count(*)-1 numCoworker
+	    from employees
+	    group by branch_id) ee
+	on e.branch_id = ee.branch_id
+	order by e.id
+	;
+
+
+
+
+## Mysql은 nvl 대신 ifnull 사용
+## 1. outer join 
+## 2. sub query
+## 3. 집계함수
+## 4. ifnull
+	select model, ifnull(s.price, 0)
+	from electric_cars e
+	left outer join (select car_id, sum(price) price
+	    from sellings
+	    group by car_id) s
+	on e.id = s.car_id
+	order by e.id
+	;

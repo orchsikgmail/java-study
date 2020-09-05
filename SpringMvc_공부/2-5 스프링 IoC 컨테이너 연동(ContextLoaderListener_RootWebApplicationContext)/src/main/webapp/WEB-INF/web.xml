@@ -1,0 +1,64 @@
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+	<display-name>Archetype Created Web Application</display-name>
+
+	<!-- 
+		ContextLoaderListener가 
+		contextConfigLocation 즉, AppConfig를 가지고 
+		AnnotationConfigWebApplicationContext를 만든다.
+		AppConfig에 @ComponentScan 사용했기 때문에 @Service 사용한 HelloService를 꺼내서 사용 가능
+	 -->
+	<context-param>
+		<param-name>contextClass</param-name>
+		<param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>me.blackbell.AppConfig</param-value>
+	</context-param>
+	
+	
+	<filter>
+		<filter-name>myFilter</filter-name>
+		<filter-class>me.blackbell.MyFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>myFilter</filter-name>
+		<servlet-name>hello</servlet-name>
+		<!-- <url-pattern>/hello</url-pattern> -->
+	</filter-mapping>
+
+
+	<!-- 사용자 정의 필터(Servlet Filter) 
+	<listener> 
+		<listener-class>me.blackbell.MyListener</listener-class> 
+	</listener> -->
+	<!-- 스프링에서 제공하는 리스너 Spring IOC 컨테이너, 즉 ApplicationContext를 ServletApplication 
+		생명주기에 맞춰 바인딩 해준다. ServletContext가 생성될 때 ApplicaionContext를 생성, 삭제 될 때는 삭제. 
+		이게 정확히 서블릿 리스너가 할 수 있는 일이었다. ApplicationContext를 만든다는 말은 스프링 설정 파일이 필요하단 
+		말. -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+
+	<servlet>
+		<servlet-name>hello</servlet-name>
+		<servlet-class>me.blackbell.HelloServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>hello</servlet-name>
+		<url-pattern>/hello</url-pattern>
+	</servlet-mapping>
+
+
+
+
+
+</web-app>
+
+

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.tymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Title</title>
+</head>
+<body>
+	<table>
+		<tr>
+			<th>강의명</th>
+			<th>총인원</th>
+			<th>시작시각</th>
+			<th>종료시각</th>
+		</tr >
+		<tr th:each="event : ${events}">
+			<td th:text="${event.name}">스터디 1차</td>
+			<td th:text="${event.limitOfEnrollment}">5명</td>
+			<td th:text="${event.startDateTime}">2019년 3월 12일 02시 00분</td>
+			<td th:text="${event.endDateTime}">2019년 3월 12일 05시 00분</td>
+		</tr>
+	
+	</table>
+
+
+
+</body>
+</html>

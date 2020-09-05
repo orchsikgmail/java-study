@@ -1,0 +1,38 @@
+.td_subject {
+	text-overflow: ellipsis; 
+	overflow:hidden; 
+	white-space: nowrap;
+	max-width: 150px;
+}
+
+.td_center{
+	text-align: center;
+	white-space: nowrap;
+}
+
+.btn_board{
+	text-align: right; 
+	margin-right: 5px;
+}
+
+.input-group2{
+	width: 50%;
+    margin: 0px auto;
+}
+
+.table-responsive{
+    width: 98%;
+    margin: 0px auto
+}
+
+.helpBox{
+	display: block;
+    margin: 12px 2px;
+    color: transparent;
+	background: #666666;
+	-webkit-background-clip: text;
+	-moz-background-clip: text;
+	background-clip: text;
+	text-shadow: 0px 3px 3px rgba(255,255,255,0.5);
+    
+}

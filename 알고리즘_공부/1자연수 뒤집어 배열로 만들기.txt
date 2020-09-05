@@ -1,0 +1,11 @@
+import java.util.stream.Stream;
+
+class Solution {
+  public int[] solution(long n) {
+     StringBuilder numString = new StringBuilder(Long.toString(n));
+        numString.reverse();
+        int[] answer = Stream.of(numString.toString().split("")).mapToInt(Integer::parseInt).toArray();
+
+        return answer;
+  }
+}

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mfboard">
+
+	<sql id="where-list">
+		<if test="condition=='all'">
+			( INSTR(subject, #{keyword}) &gt; 0
+				or INSTR(content, #{keyword}) &gt; 0 )
+		</if>
+		<if test="condition=='subject'">
+			INSTR(subject, #{keyword}) &gt; 0
+		</if>
+		<if test="condition=='content'">
+			DBMS_LOB.INSTR(content, #{keyword}) &gt; 0
+		</if>
+		<if test="condition=='name'">
+			name = #{keyword}
+		</if>
+		<if test="condition=='created'">
+			( TO_CHAR(created, 'YYYY-MM-DD')= #{keyword}
+				OR TO_CHAR(created, 'YYYYMMDD') = #{keyword}
+				OR TO_CHAR(created, 'YYYY/MM/DD') = #{keyword} )
+		</if>
+	</sql>
+
+
+	<select id="maxNum" resultType="Integer">
+		SELECT NVL(MAX(num), 0) FROM mfboard
+	</select>
+
+	<insert id="insertBoard" parameterType="com.sp.mfboard.Mfboard">
+		INSERT INTO mfboard (num, name, subject, content, notice,
+			parent, groupNum, orderNum, depth)
+		VALUES ( #{num}, #{name}, #{subject}, #{content}, #{notice},
+			#{parent}, #{groupNum}, #{orderNum}, #{depth} )
+	</insert>
+
+	<update id="updateOrderNum" parameterType="map">
+		UPDATE mfboard 
+		SET orderNum = orderNum+1
+		WHERE groupNum = #{groupNum} and orderNum &gt; #{orderNum}
+	</update>
+
+	<insert id="insertFile" parameterType="com.sp.mfboard.Mfboard">
+		INSERT INTO mfboardFile (fileNum, num, saveFilename, originalFilename, fileSize)
+		VALUES ( mfboardFile_seq.NEXTVAL, #{num}, #{saveFilename}, #{originalFilename}, 
+			#{fileSize} )
+	</insert>
+
+	<select id="dataCount" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*), 0)
+		FROM mfboard
+		<where>
+			<if test="keyword != null and keyword != ''">
+				<include refid="where-list" />
+			</if>
+		</where>
+	</select>
+	
+	<select id="listBoardTop" resultType="com.sp.mfboard.Mfboard">
+		SELECT num, notice, name, subject, hitCount, 
+			TO_CHAR(created, 'YYYY-MM-DD') created
+		FROM mfboard
+		WHERE notice = 1
+		ORDER BY num DESC
+	</select>
+
+	<select id="listBoard" parameterType="map" resultType="com.sp.mfboard.Mfboard">
+		SELECT * FROM (
+			SELECT ROWNUM rnum, tb.* FROM (
+				SELECT num, notice, name, subject, hitCount,
+					TO_CHAR(created, 'YYYY-MM-DD') created,
+					parent, groupNum, orderNum, depth
+				FROM mfboard
+				<where>
+					<if test="keyword!=null and keyword != ''">
+						<include refid="where-list" />
+					</if>
+				</where>
+				ORDER BY groupNum DESC, orderNum asc
+	<![CDATA[
+			) tb WHERE ROWNUM <= #{end}
+		) WHERE rnum >= #{start}
+	]]>
+	</select>
+
+	<select id="readMfboard" parameterType="Integer" resultType="com.sp.mfboard.Mfboard">
+		SELECT num, name, subject, content, created, hitCount, notice,
+			parent, groupNum, orderNum, depth
+		FROM mfboard
+		WHERE num = #{num}
+	</select>
+
+	<select id="listFile" parameterType="Integer" resultType="com.sp.mfboard.Mfboard">
+		SELECT filenum, num, saveFilename, originalFilename, fileSize
+		FROM mfboardFile
+		WHERE num = #{num}
+	</select>
+	
+	<update id="updateHitCount" parameterType="Integer">
+		UPDATE mfboard SET hitCount = hitCount +1 
+		WHERE num = #{num}
+	</update>
+
+	<select id="preReadBoard" parameterType="map" resultType="com.sp.mfboard.Mfboard">
+		SELECT tb.* FROM (
+			SELECT num, subject
+			FROM mfboard
+			<where>
+				<if test="keyword!=null and keyword!=''">
+					<include refid="where-list" />
+				</if>
+				<![CDATA[
+				AND (
+				 ( groupNum = #{groupNum} AND orderNum < #{orderNum} )
+				 OR
+				 ( groupNum > #{groupNum} ) 
+				)
+				]]>
+			</where>
+			ORDER BY groupNum ASC, orderNum DESC
+		) tb WHERE ROWNUM =1
+	</select>
+
+	<select id="nextReadBoard" parameterType="map" resultType="com.sp.mfboard.Mfboard">
+		SELECT tb.* FROM (
+			SELECT num, subject
+			FROM mfboard
+			<where>
+				<if test="keyword!=null and keyword!=''">
+					<include refid="where-list" />
+				</if>
+				<![CDATA[
+				AND (
+				 ( groupNum = #{groupNum} AND orderNum > #{orderNum} )
+				 OR
+				 ( groupNum < #{groupNum} ) 
+				)
+				]]>
+			</where>
+			ORDER BY groupNum DESC, orderNum ASC
+		) tb WHERE ROWNUM =1
+	</select>
+
+	<select id="readFile" parameterType="Integer" resultType="com.sp.mfboard.Mfboard">
+		SELECT fileNum, num, saveFilename, originalFilename, fileSize
+		FROM mfboardFile
+		WHERE fileNum = #{fileNum}
+	</select>
+
+	<update id="updateBoard" parameterType="com.sp.mfboard.Mfboard">
+		UPDATE mfboard
+		SET name=#{name}, subject=#{subject}, content=#{content}, notice=#{notice}
+		WHERE num=#{num}
+	</update>
+
+	<delete id="deleteFile" parameterType="map">
+		DELETE FROM mfboardFile
+		WHERE ${field} IN (
+			SELECT num
+			FROM mfboard
+			START WITH ${field} = #{num}
+			CONNECT BY PRIOR num = parent
+		)
+	</delete>
+
+	<delete id="deleteBoard" parameterType="map">
+		DELETE FROM mfboard
+		WHERE ${field} IN (
+			SELECT num
+			FROM mfboard
+			START WITH ${field} = #{num}
+			CONNECT BY PRIOR ${field} = parent
+		)
+	</delete>
+
+
+
+
+</mapper>
